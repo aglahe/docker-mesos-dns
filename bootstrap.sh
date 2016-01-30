@@ -12,7 +12,8 @@ fi
 
 # Check for local ip address parameter
 if [ -z ${LOCAL_IP+x} ]; then
-  IP=$(nslookup `hostname -f` | tail -1 | head -2 | awk '{print $3}')
+  echo "Please supply the IP that this conatiner should use!"
+  exit 1
 else
   IP="${LOCAL_IP}"
 fi
@@ -29,6 +30,13 @@ else
   # Produce correct env variables for DNS servers
   IFS=','
   DNS_SERVERS="[${DNS_SERVER_STRINGS[*]}]"
+fi
+
+# Check for PORT parameter
+if [ -z ${MESOS_DNS_PORT+x} ]; then
+  DNS_PORT="8053"
+else
+  DNS_PORT="${MESOS_DNS_PORT}"
 fi
 
 # Check for HTTP_PORT parameter
@@ -70,10 +78,11 @@ fi
 sed -i -e "s/%%MESOS_ZK%%/${ZK}/" \
   -e "s/%%IP%%/${LOCAL_IP}/" \
   -e "s/%%HTTP_PORT%%/${PORT}/" \
+  -e "s/%%MESOS_DNS_PORT%%/${DNS_PORT}/" \
   -e "s/%%EXTERNAL_DNS_SERVERS%%/${DNS_SERVERS}/" \
   -e "s/%%HTTP_ON%%/${HTTP_ENABLED}/" \
   -e "s/%%REFRESH%%/${REFRESH}/" \
   -e "s/%%TIMEOUT%%/${TIMEOUT}/" \
-  $MESOS_DNS_PATH/config.json 
+  $MESOS_DNS_PATH/config.json
 
 exec $MESOS_DNS_PATH/mesos-dns -config=$MESOS_DNS_PATH/config.json $VERBOSITY
