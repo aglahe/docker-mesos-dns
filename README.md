@@ -7,6 +7,7 @@ The following options can be passed to the Docker image:
 
 - `LOCAL_IP`: The IP address the host has which should run Mesos DNS (**mandatory, if your slave's hostname is not resolvable**)
 - `MESOS_ZK`: The ZooKeeper connection string for the Mesos Master(s), e.g. `zk://192.168.0.100:2181/mesos`  (**mandatory**)
+- `MESOS_DNS_PORT`: The port DNS requests should listen on, defaults to 8053
 - `MESOS_DNS_EXTERNAL_SERVERS`: A comma-separated list of external DNS servers, e.g. `8.8.8.8,8.8.4.4` for the Google DNS servers. If not used, ``8.8.8.8` will be the default external DNS server.
 - `MESOS_DNS_HTTP_ENABLED`: Whether the Mesos DNS web interface should be started. If not used or passed a `true` value, it will be disabled.
 - `MESOS_DNS_HTTP_PORT`: The HTTP port of the Mesos DNS web interface. If not defined (and the web interface is enabled), `8123` will be used as port.
@@ -18,7 +19,7 @@ A further description of the Mesos DNS configuration parameters can be found on 
 
 ### DNS configuration on the host
 As Mesos DNS needs an nameserver entry which points to the own host (the host which Mesos DNS is running on) in the `/etc/resolv.conf` at the begining of the file (see ["Slave Setup"][docs]), it is necessary to prepare this entry before Mesos DNS can be run via Docker.
-The "pinning" of the image to a host is done via `hostname` constraints when running via Marathon. 
+The "pinning" of the image to a host is done via `hostname` constraints when running via Marathon.
 
 ## Running
 The image can be run either via Marathon (recommended!), or via command line on the Mesos Slave's Docker host.
